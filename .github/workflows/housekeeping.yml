@@ -5,6 +5,9 @@ on:
     types: [closed]
   delete:
 
+permissions:
+  contents: write
+
 jobs:
   housekeeping:
     uses: banua-coder/banua-coder-workflow/.github/workflows/housekeeping.yml@v1
