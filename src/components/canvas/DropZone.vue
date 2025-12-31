@@ -119,6 +119,30 @@ function handleDrop(e: DragEvent) {
     uiStore.showNotification('Failed to add component', 'error')
   }
 }
+
+// Handle tap for mobile - place pending component
+function handleTapToPlace() {
+  if (!uiStore.pendingComponent) return
+
+  const pending = uiStore.pendingComponent
+  const newComponent = createDefaultComponent(pending.type as ComponentType)
+
+  // Apply any default props
+  if (pending.defaultProps) {
+    Object.assign(newComponent, pending.defaultProps)
+  }
+
+  // Add to template at specified index
+  templateStore.addComponent(newComponent, props.index, props.parentId)
+
+  // Select the new component
+  uiStore.selectComponent(newComponent._id)
+
+  // Clear pending component
+  uiStore.clearPendingComponent()
+
+  uiStore.showNotification('Component added', 'success')
+}
 </script>
 
 <template>
@@ -128,15 +152,18 @@ function handleDrop(e: DragEvent) {
     @dragleave="handleDragLeave"
     @dragover="handleDragOver"
     @drop="handleDrop"
+    @click="handleTapToPlace"
     class="relative transition-all duration-300 ease-out transform border-2 border-dashed rounded-lg"
     :class="[
       isOver
         ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-400 min-h-16'
-        : uiStore.isDragging
-          ? 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 bg-gray-50 dark:bg-gray-800/50 min-h-12'
-          : position === 'end' && !parentId
-            ? 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50'
-            : 'border-transparent min-h-2',
+        : uiStore.hasPendingComponent
+          ? 'border-blue-300 dark:border-blue-600 hover:border-blue-500 dark:hover:border-blue-400 bg-blue-50/50 dark:bg-blue-900/20 min-h-12 cursor-pointer'
+          : uiStore.isDragging
+            ? 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 bg-gray-50 dark:bg-gray-800/50 min-h-12'
+            : position === 'end' && !parentId
+              ? 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50'
+              : 'border-transparent min-h-2',
     ]"
   >
     <!-- Drop indicator with animation -->
@@ -163,9 +190,33 @@ function handleDrop(e: DragEvent) {
       </div>
     </Transition>
 
+    <!-- Tap to place indicator (mobile) -->
+    <Transition
+      enter-active-class="transition-all duration-200 ease-out"
+      enter-from-class="opacity-0 scale-90"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition-all duration-150 ease-in"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-90"
+    >
+      <div
+        v-if="!isOver && uiStore.hasPendingComponent"
+        class="absolute inset-0 flex items-center justify-center pointer-events-none"
+      >
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+          </svg>
+          <span class="text-sm text-blue-600 dark:text-blue-400 font-medium">
+            Tap to place
+          </span>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Placeholder for empty container drop zone -->
     <div
-      v-if="!isOver && parentId && uiStore.isDragging && position === 'end'"
+      v-if="!isOver && !uiStore.hasPendingComponent && parentId && uiStore.isDragging && position === 'end'"
       class="absolute inset-0 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 pointer-events-none"
     >
       Drop components here
@@ -173,7 +224,7 @@ function handleDrop(e: DragEvent) {
 
     <!-- Empty canvas state -->
     <div
-      v-if="!isOver && !parentId && position === 'end'"
+      v-if="!isOver && !uiStore.hasPendingComponent && !parentId && position === 'end'"
       class="absolute inset-0 flex items-center justify-center pointer-events-none"
     >
       <div class="text-center">

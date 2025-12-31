@@ -118,6 +118,14 @@ function handleRedo() {
     <!-- Center: Actions -->
     <div class="flex items-center gap-1 sm:gap-2">
       <!-- Import - Hidden in preview mode -->
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out"
+        enter-from-class="opacity-0 scale-90 -translate-x-2"
+        enter-to-class="opacity-100 scale-100 translate-x-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100 translate-x-0"
+        leave-to-class="opacity-0 scale-90 -translate-x-2"
+      >
       <div v-if="!uiStore.previewMode" class="relative group">
         <button
           class="p-1.5 sm:px-3 sm:py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex items-center gap-1.5"
@@ -150,8 +158,17 @@ function handleRedo() {
           </div>
         </div>
       </div>
+      </Transition>
 
       <!-- Export - Hidden in preview mode -->
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out delay-[50ms]"
+        enter-from-class="opacity-0 scale-90 -translate-x-2"
+        enter-to-class="opacity-100 scale-100 translate-x-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100 translate-x-0"
+        leave-to-class="opacity-0 scale-90 -translate-x-2"
+      >
       <div v-if="!uiStore.previewMode" class="relative group">
         <button
           class="p-1.5 sm:px-3 sm:py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex items-center gap-1.5"
@@ -190,12 +207,30 @@ function handleRedo() {
           </div>
         </div>
       </div>
+      </Transition>
 
       <!-- Divider - Hidden in preview mode -->
-      <div v-if="!uiStore.previewMode" class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block" />
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out delay-100"
+        enter-from-class="opacity-0 scale-y-0"
+        enter-to-class="opacity-100 scale-y-100"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 scale-y-100"
+        leave-to-class="opacity-0 scale-y-0"
+      >
+        <div v-if="!uiStore.previewMode" class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block" />
+      </Transition>
 
       <!-- Undo/Redo - Hidden in preview mode -->
-      <template v-if="!uiStore.previewMode">
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out delay-100"
+        enter-from-class="opacity-0 scale-90 -translate-x-2"
+        enter-to-class="opacity-100 scale-100 translate-x-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100 translate-x-0"
+        leave-to-class="opacity-0 scale-90 -translate-x-2"
+      >
+      <div v-if="!uiStore.previewMode" class="flex items-center gap-1 sm:gap-2">
         <button
           @click="handleUndo"
           :disabled="!uiStore.canUndo"
@@ -218,7 +253,8 @@ function handleRedo() {
         </button>
 
         <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block" />
-      </template>
+      </div>
+      </Transition>
 
       <!-- Preview -->
       <button
@@ -238,6 +274,14 @@ function handleRedo() {
       </button>
 
       <!-- Clear - Hidden in preview mode -->
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out delay-150"
+        enter-from-class="opacity-0 scale-90 translate-x-2"
+        enter-to-class="opacity-100 scale-100 translate-x-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100 translate-x-0"
+        leave-to-class="opacity-0 scale-90 translate-x-2"
+      >
       <button
         v-if="!uiStore.previewMode"
         @click="clearForm"
@@ -249,6 +293,7 @@ function handleRedo() {
         </svg>
         <span class="hidden md:inline">Clear</span>
       </button>
+      </Transition>
     </div>
 
     <!-- Right: Settings -->

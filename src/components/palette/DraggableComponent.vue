@@ -6,6 +6,10 @@ const props = defineProps<{
   component: ComponentTypeInfo
 }>()
 
+const emit = defineEmits<{
+  selected: []
+}>()
+
 const uiStore = useUIStore()
 
 function handleDragStart(e: DragEvent) {
@@ -26,6 +30,12 @@ function handleDragStart(e: DragEvent) {
 function handleDragEnd() {
   uiStore.setDragging(false)
 }
+
+// Handle tap for mobile - set pending component
+function handleTap() {
+  uiStore.setPendingComponent(props.component.type, props.component.defaultProps)
+  emit('selected')
+}
 </script>
 
 <template>
@@ -33,7 +43,14 @@ function handleDragEnd() {
     draggable="true"
     @dragstart="handleDragStart"
     @dragend="handleDragEnd"
-    class="mx-2 my-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md cursor-grab hover:border-blue-400 hover:shadow-md hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 active:shadow-sm transition-all duration-200 ease-out group"
+    @click.stop="handleTap"
+    @touchend.stop.prevent="handleTap"
+    :class="[
+      'mx-2 my-1 px-3 py-2 rounded-md cursor-pointer sm:cursor-grab hover:border-blue-400 hover:shadow-md hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 active:shadow-sm transition-all duration-200 ease-out group select-none touch-manipulation',
+      uiStore.pendingComponent?.type === component.type
+        ? 'bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500'
+        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600'
+    ]"
     :title="component.description"
   >
     <div class="flex items-center gap-2">
