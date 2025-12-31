@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'release/**'
+      - 'hotfix/**'
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    uses: banua-coder/banua-coder-workflow/.github/workflows/release.yml@v1
+    with:
+      project-type: web-app
+      main-branch: main
+      develop-branch: develop
+      changelog-format: keepachangelog
+      auto-merge-backport: false
+      node-version: '20'
+    secrets: inherit
+
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: release
+    uses: banua-coder/banua-coder-workflow/.github/workflows/deploy-on-tag.yml@v1
+    with:
+      environment: production
+      deploy-provider: netlify
+    secrets: inherit

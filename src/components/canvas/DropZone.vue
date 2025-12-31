@@ -89,8 +89,7 @@ function handleDrop(e: DragEvent) {
     if (data.type === 'new-component') {
       // Create new component from palette
       const newComponent = createDefaultComponent(
-        data.componentType as ComponentType,
-        props.parentId
+        data.componentType as ComponentType
       )
 
       // Apply any default props

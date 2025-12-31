@@ -4,6 +4,8 @@
 
 Visual drag-and-drop template builder for FormGear forms
 
+**Live Demo:** [form-gear-builder.netlify.app](https://form-gear-builder.netlify.app)
+
 ## Overview
 
 FormGear Builder is a web-based visual editor for creating form templates compatible with the [FormGear](https://github.com/AdityaSetyadi/form-gear) form engine. Build complex survey forms without writing JSON manually.
