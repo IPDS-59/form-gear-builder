@@ -116,6 +116,10 @@ function handleSelect(key: string, event: Event) {
   const value = target.value === '' ? undefined : Number(target.value)
   emit('update', key, value)
 }
+
+function handlePreviewClick() {
+  window.setTimeout(updateInlinePreview, 50)
+}
 </script>
 
 <template>
@@ -194,7 +198,7 @@ function handleSelect(key: string, event: Event) {
             <details class="border border-gray-200 dark:border-gray-600 rounded-md">
               <summary
                 class="px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                @click="setTimeout(updateInlinePreview, 50)"
+                @click="handlePreviewClick"
               >
                 Preview HTML
               </summary>

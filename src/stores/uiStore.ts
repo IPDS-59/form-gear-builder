@@ -167,7 +167,7 @@ export const useUIStore = defineStore('ui', () => {
   function undo(): string | null {
     if (historyIndex.value > 0) {
       historyIndex.value--
-      return history.value[historyIndex.value]
+      return history.value[historyIndex.value] ?? null
     }
     return null
   }
@@ -176,7 +176,7 @@ export const useUIStore = defineStore('ui', () => {
   function redo(): string | null {
     if (historyIndex.value < history.value.length - 1) {
       historyIndex.value++
-      return history.value[historyIndex.value]
+      return history.value[historyIndex.value] ?? null
     }
     return null
   }

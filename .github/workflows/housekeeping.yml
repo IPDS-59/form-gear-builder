@@ -1,0 +1,13 @@
+name: Housekeeping
+
+on:
+  pull_request:
+    types: [closed]
+  delete:
+
+jobs:
+  housekeeping:
+    uses: banua-coder/banua-coder-workflow/.github/workflows/housekeeping.yml@v1
+    with:
+      protected-branches: main,develop
+    secrets: inherit
