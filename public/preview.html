@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FormGear Preview</title>
+  <!-- Include FormGear styles -->
+  <link rel="stylesheet" href="/form-gear.css">
+  <style>
+    /* Only style our custom preview states - don't override FormGear styles */
+    .preview-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .preview-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1rem;
+    }
+
+    .preview-state h3 {
+      font-size: 1.125rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview-state p {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .preview-state.error svg {
+      color: #dc2626;
+    }
+
+    .preview-state.error h3 {
+      color: #dc2626;
+    }
+
+    .preview-state.loading .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="FormGear-root">
+    <div class="preview-state">
+      <div>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #9ca3af;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 style="color: #374151;">Waiting for template data...</h3>
+        <p>The preview will appear when you add components to your form.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FormGear loader element (required by FormGear engine) -->
+  <div id="FormGear-loader" class="hidden"></div>
+
+  <script>
+    let formInstance = null;
+    let formGearLoaded = false;
+    let pendingInit = null;
+    let initTimeout = null;
+
+    // Lazy load FormGear script
+    function loadFormGearScript() {
+      return new Promise((resolve, reject) => {
+        if (formGearLoaded) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = '/form-gear.umd.js';
+        script.async = true;
+        script.onload = () => {
+          formGearLoaded = true;
+          console.log('FormGear: Script loaded');
+          resolve();
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Initialize FormGear with the received template (debounced)
+    async function initFormGear(template, validation) {
+      // Debounce rapid updates - wait 300ms before initializing
+      if (initTimeout) {
+        clearTimeout(initTimeout);
+      }
+
+      // Store pending init data
+      pendingInit = { template, validation };
+
+      initTimeout = setTimeout(() => doInitFormGear(), 300);
+    }
+
+    // Actual initialization logic
+    async function doInitFormGear() {
+      const { template, validation } = pendingInit || {};
+      if (!template) return;
+
+      const root = document.getElementById('FormGear-root');
+
+      // Check if template has valid components
+      if (!template?.components?.length || !template.components[0]?.length) {
+        // Cleanup previous instance
+        if (formInstance) {
+          try { formInstance.destroy(); } catch (e) {}
+          formInstance = null;
+        }
+        root.innerHTML = `
+          <div class="preview-state">
+            <div>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #9ca3af;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 style="color: #374151;">No components yet</h3>
+              <p>Add components to your form to see the preview.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Show loading state
+      root.innerHTML = `
+        <div class="preview-state loading">
+          <div>
+            <div class="spinner"></div>
+            <h3 style="color: #374151;">Loading FormGear...</h3>
+            <p>Initializing the form engine</p>
+          </div>
+        </div>
+      `;
+
+      try {
+        // Lazy load FormGear script if not loaded
+        if (!formGearLoaded) {
+          await loadFormGearScript();
+        }
+
+        // Clear previous instance
+        if (formInstance) {
+          try { formInstance.destroy(); } catch (e) {}
+          formInstance = null;
+        }
+
+        // Clear root for fresh render
+        root.innerHTML = '';
+
+        // Use requestIdleCallback for non-blocking initialization (with fallback)
+        const scheduleInit = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+
+        scheduleInit(() => {
+          try {
+            const { createFormGear, ClientMode, FormMode, InitialMode, LookupMode } = window.FormGear;
+
+            // Suppress errors from optional DOM element access
+            const originalQuerySelector = document.querySelector.bind(document);
+            document.querySelector = function(selector) {
+              const result = originalQuerySelector(selector);
+              // Return a dummy element for sidebar-related selectors if not found
+              if (!result && (selector.includes('sidebar') || selector.includes('switch') || selector.includes('component-div'))) {
+                return {
+                  classList: { toggle: () => {}, add: () => {}, remove: () => {} },
+                  scrollTop: 0,
+                  style: {}
+                };
+              }
+              return result;
+            };
+
+            // Create FormGear instance
+            formInstance = createFormGear({
+              data: {
+                template: template,
+                validation: validation || { testFunctions: [] },
+              },
+              config: {
+                clientMode: ClientMode.CAWI,
+                formMode: FormMode.OPEN,
+                initialMode: InitialMode.OPEN,
+                lookupMode: LookupMode.ONLINE,
+              },
+              callbacks: {
+                onSave: (response) => {
+                  console.log('FormGear Preview: Response saved', response);
+                },
+                onSubmit: (response) => {
+                  console.log('FormGear Preview: Form submitted', response);
+                },
+              },
+            });
+
+            // Restore original querySelector after a delay
+            setTimeout(() => {
+              document.querySelector = originalQuerySelector;
+            }, 1000);
+
+            console.log('FormGear Preview: Initialized successfully');
+          } catch (error) {
+            console.error('FormGear Preview Error:', error);
+            root.innerHTML = `
+              <div class="preview-state error">
+                <div>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <h3>Failed to initialize FormGear</h3>
+                  <p>${error.message}</p>
+                  <pre style="margin-top: 1rem; padding: 1rem; background: #fef2f2; border-radius: 0.5rem; text-align: left; font-size: 0.75rem; max-width: 500px; overflow: auto;">${error.stack}</pre>
+                </div>
+              </div>
+            `;
+          }
+        }, { timeout: 2000 });
+      } catch (error) {
+        console.error('FormGear load error:', error);
+        root.innerHTML = `
+          <div class="preview-state error">
+            <div>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <h3>Failed to load FormGear</h3>
+              <p>${error.message}</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Listen for messages from parent window
+    window.addEventListener('message', (event) => {
+      if (event.data?.type !== 'formgear-preview') return;
+
+      const { template, validation } = event.data;
+      initFormGear(template, validation);
+    });
+
+    // Notify parent that we're ready
+    window.parent.postMessage({ type: 'formgear-ready' }, '*');
+  </script>
+</body>
+</html>

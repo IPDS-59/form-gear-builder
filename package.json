@@ -1,0 +1,43 @@
+{
+  "name": "formgear-builder",
+  "version": "1.0.0",
+  "description": "Visual drag-and-drop template builder for FormGear forms",
+  "type": "module",
+  "author": "Ignatius Aditya Setyadi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdityyaX/formgear-builder.git"
+  },
+  "keywords": [
+    "formgear",
+    "form-builder",
+    "template-builder",
+    "vue3",
+    "drag-and-drop",
+    "survey-builder"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^2.2.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "@vueuse/core": "^14.1.0",
+    "highlight.js": "^11.11.1",
+    "pinia": "^3.0.4",
+    "tailwindcss": "^4.1.18",
+    "vue": "^3.5.24",
+    "vue-draggable-plus": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vue-tsc": "^3.1.4"
+  }
+}
