@@ -1,0 +1,16 @@
+name: Sanity Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  sanity-check:
+    uses: banua-coder/banua-coder-workflow/.github/workflows/sanity-check.yml@v1
+    with:
+      project-type: vue
+      node-version: '20'
+      vue-max-loc: 700
+      check-native-inputs: true
+      check-vue-types: true
+    secrets: inherit
