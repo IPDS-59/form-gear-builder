@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useTemplateStore } from '@/stores/templateStore'
-import { useUIStore } from '@/stores/uiStore'
 import FieldPicker from './FieldPicker.vue'
 import FunctionPicker from './FunctionPicker.vue'
 import OperatorButtons from './OperatorButtons.vue'
@@ -15,9 +13,6 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
   close: []
 }>()
-
-const templateStore = useTemplateStore()
-const uiStore = useUIStore()
 
 // Local expression value
 const expression = ref(props.modelValue)

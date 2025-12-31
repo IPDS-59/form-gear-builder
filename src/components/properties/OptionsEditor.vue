@@ -60,7 +60,8 @@ function addFilterDependency() {
 
 function updateFilterDependency(index: number, field: 'params' | 'sourceAnswer', value: string) {
   const deps = [...(apiForm.value.filterDependencies ?? [])]
-  deps[index] = { ...deps[index], [field]: value }
+  const existing = deps[index] ?? { params: '', sourceAnswer: '' }
+  deps[index] = { ...existing, [field]: value }
   apiForm.value = { ...apiForm.value, filterDependencies: deps }
 }
 
@@ -98,8 +99,11 @@ function addOption() {
 
 function updateOption(index: number, field: keyof Option, value: string | number | boolean) {
   const newOptions = [...options.value]
-  newOptions[index] = { ...newOptions[index], [field]: value }
-  emit('update', 'options', newOptions)
+  const existing = newOptions[index]
+  if (existing) {
+    newOptions[index] = { ...existing, [field]: value }
+    emit('update', 'options', newOptions)
+  }
 }
 
 function removeOption(index: number) {
@@ -112,10 +116,13 @@ function moveOption(index: number, direction: 'up' | 'down') {
   if (newIndex < 0 || newIndex >= options.value.length) return
 
   const newOptions = [...options.value]
-  const temp = newOptions[index]
-  newOptions[index] = newOptions[newIndex]
-  newOptions[newIndex] = temp
-  emit('update', 'options', newOptions)
+  const current = newOptions[index]
+  const target = newOptions[newIndex]
+  if (current && target) {
+    newOptions[index] = target
+    newOptions[newIndex] = current
+    emit('update', 'options', newOptions)
+  }
 }
 
 function handleSourceOption(event: Event) {

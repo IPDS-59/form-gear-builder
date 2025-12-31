@@ -72,7 +72,9 @@ export const useValidationStore = defineStore('validation', () => {
     const testFunc = testFunctions.value.find((tf) => tf.dataKey === dataKey)
     if (testFunc && testFunc.validations[fromIndex]) {
       const [rule] = testFunc.validations.splice(fromIndex, 1)
-      testFunc.validations.splice(toIndex, 0, rule)
+      if (rule) {
+        testFunc.validations.splice(toIndex, 0, rule)
+      }
     }
   }
 

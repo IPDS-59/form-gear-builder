@@ -430,14 +430,15 @@ export function canHaveChildren(type: ComponentType): boolean {
 
 // Check if a component type needs options
 export function needsOptions(type: ComponentType): boolean {
-  return [
+  const optionTypes: ComponentType[] = [
     ComponentType.RADIO,
     ComponentType.SELECT,
     ComponentType.CHECKBOX,
     ComponentType.MULTIPLE_SELECT,
     ComponentType.LIST_TEXT_REPEAT,
     ComponentType.LIST_SELECT_REPEAT,
-  ].includes(type)
+  ]
+  return optionTypes.includes(type)
 }
 
 // Check if a component can be nested

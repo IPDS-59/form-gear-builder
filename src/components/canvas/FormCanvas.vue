@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTemplateStore } from '@/stores/templateStore'
-import { useUIStore } from '@/stores/uiStore'
 import CanvasComponent from './CanvasComponent.vue'
 import DropZone from './DropZone.vue'
 
 const templateStore = useTemplateStore()
-const uiStore = useUIStore()
 
 // Get root level components (no parent)
 const rootComponents = computed(() =>
