@@ -65,8 +65,13 @@ export const useTemplateStore = defineStore('template', () => {
       if (index >= siblings.length) {
         components.value.push(newComponent)
       } else {
-        const siblingIndex = components.value.indexOf(siblings[index])
-        components.value.splice(siblingIndex, 0, newComponent)
+        const sibling = siblings[index]
+        if (sibling) {
+          const siblingIndex = components.value.indexOf(sibling)
+          components.value.splice(siblingIndex, 0, newComponent)
+        } else {
+          components.value.push(newComponent)
+        }
       }
     } else if (index !== undefined) {
       // Root level with specific index
@@ -74,8 +79,13 @@ export const useTemplateStore = defineStore('template', () => {
       if (index >= roots.length) {
         components.value.push(newComponent)
       } else {
-        const rootIndex = components.value.indexOf(roots[index])
-        components.value.splice(rootIndex, 0, newComponent)
+        const root = roots[index]
+        if (root) {
+          const rootIndex = components.value.indexOf(root)
+          components.value.splice(rootIndex, 0, newComponent)
+        } else {
+          components.value.push(newComponent)
+        }
       }
     } else {
       components.value.push(newComponent)
@@ -109,15 +119,18 @@ export const useTemplateStore = defineStore('template', () => {
   ): void {
     const index = components.value.findIndex((c) => c._id === id)
     if (index !== -1) {
-      if (typeof keyOrUpdates === 'string') {
-        // Key-value pair update
-        components.value[index] = {
-          ...components.value[index],
-          [keyOrUpdates]: value
+      const existing = components.value[index]
+      if (existing) {
+        if (typeof keyOrUpdates === 'string') {
+          // Key-value pair update
+          components.value[index] = {
+            ...existing,
+            [keyOrUpdates]: value
+          }
+        } else {
+          // Object update
+          components.value[index] = { ...existing, ...keyOrUpdates }
         }
-      } else {
-        // Object update
-        components.value[index] = { ...components.value[index], ...keyOrUpdates }
       }
     }
   }

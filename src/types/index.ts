@@ -6,61 +6,69 @@
  */
 
 // Component Type IDs (matching FormGear engine)
-export enum ComponentType {
-  SECTION = 1,
-  NESTED = 2,
-  INNER_HTML = 3,
-  VARIABLE = 4,
-  DATE = 11,
-  DATETIME = 12,
-  TIME = 13,
-  MONTH = 14,
-  WEEK = 15,
-  SINGLE_CHECK = 16,
-  TOGGLE = 17,
-  RANGE_SLIDER = 18,
-  URL = 19,
-  CURRENCY = 20,
-  LIST_TEXT_REPEAT = 21,
-  LIST_SELECT_REPEAT = 22,
-  MULTIPLE_SELECT = 23,
-  MASKING = 24,
-  TEXT = 25,
-  RADIO = 26,
-  SELECT = 27,
-  NUMBER = 28,
-  CHECKBOX = 29,
-  TEXTAREA = 30,
-  EMAIL = 31,
-  PHOTO = 32,
-  GPS = 33,
-  CSV = 34,
-  NOW = 35,
-  SIGNATURE = 36,
-  UNIT = 37,
-  DECIMAL = 38,
-}
+export const ComponentType = {
+  SECTION: 1,
+  NESTED: 2,
+  INNER_HTML: 3,
+  VARIABLE: 4,
+  DATE: 11,
+  DATETIME: 12,
+  TIME: 13,
+  MONTH: 14,
+  WEEK: 15,
+  SINGLE_CHECK: 16,
+  TOGGLE: 17,
+  RANGE_SLIDER: 18,
+  URL: 19,
+  CURRENCY: 20,
+  LIST_TEXT_REPEAT: 21,
+  LIST_SELECT_REPEAT: 22,
+  MULTIPLE_SELECT: 23,
+  MASKING: 24,
+  TEXT: 25,
+  RADIO: 26,
+  SELECT: 27,
+  NUMBER: 28,
+  CHECKBOX: 29,
+  TEXTAREA: 30,
+  EMAIL: 31,
+  PHOTO: 32,
+  GPS: 33,
+  CSV: 34,
+  NOW: 35,
+  SIGNATURE: 36,
+  UNIT: 37,
+  DECIMAL: 38,
+} as const
+
+export type ComponentType = (typeof ComponentType)[keyof typeof ComponentType]
 
 // Validation Types
-export enum ValidationType {
-  REQUIRED = 1,
-  ERROR = 2,
-  WARNING = 3,
-}
+export const ValidationType = {
+  REQUIRED: 1,
+  ERROR: 2,
+  WARNING: 3,
+} as const
+
+export type ValidationType = (typeof ValidationType)[keyof typeof ValidationType]
 
 // Option Types
-export enum OptionType {
-  STATIC = 1,
-  API = 2,
-  REFERENCE = 3,
-}
+export const OptionType = {
+  STATIC: 1,
+  API: 2,
+  REFERENCE: 3,
+} as const
+
+export type OptionType = (typeof OptionType)[keyof typeof OptionType]
 
 // Client Modes
-export enum ClientMode {
-  CAWI = 1,
-  CAPI = 2,
-  PAPI = 3,
-}
+export const ClientMode = {
+  CAWI: 1,
+  CAPI: 2,
+  PAPI: 3,
+} as const
+
+export type ClientMode = (typeof ClientMode)[keyof typeof ClientMode]
 
 // Option for select, radio, checkbox components
 export interface Option {
