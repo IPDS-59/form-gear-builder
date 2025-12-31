@@ -109,7 +109,7 @@ function getTypeColor(type: ValidationType): string {
       >
       <div
         v-for="(rule, index) in rules"
-        :key="`rule-${index}-${rule.test}`"
+        :key="`rule-${index}`"
         class="p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-2"
       >
         <!-- Rule header -->
