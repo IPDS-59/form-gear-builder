@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { version } from '../../../package.json'
 
 const templateStore = useTemplateStore()
 const validationStore = useValidationStore()
@@ -119,7 +120,10 @@ function handleRedo() {
     <div class="flex items-center gap-2 sm:gap-3">
       <img src="/FormGear.png" alt="FormGear" class="w-7 h-7 sm:w-8 sm:h-8" />
       <div class="hidden sm:block">
-        <h1 class="text-sm font-semibold text-gray-900 dark:text-white">FormGear Builder</h1>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm font-semibold text-gray-900 dark:text-white">FormGear Builder</h1>
+          <span class="text-xs px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full font-medium">v{{ version }}</span>
+        </div>
         <p class="text-xs text-gray-500 dark:text-gray-400">Template Designer</p>
       </div>
     </div>
