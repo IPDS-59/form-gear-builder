@@ -2,6 +2,14 @@
 import { ref, watch, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import hljs from 'highlight.js/lib/core'
 import xml from 'highlight.js/lib/languages/xml'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 // Register HTML/XML language
 hljs.registerLanguage('xml', xml)
@@ -211,6 +219,13 @@ function handleCancel() {
   emit('update:visible', false)
 }
 
+// Handle dialog open state change
+function handleOpenChange(open: boolean) {
+  if (!open) {
+    handleCancel()
+  }
+}
+
 // Insert HTML snippet
 function insertSnippet(snippet: string) {
   const textarea = editorRef.value
@@ -275,158 +290,126 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition-opacity duration-200 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition-opacity duration-150 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
+  <Dialog :open="visible" @update:open="handleOpenChange">
+    <DialogContent
+      class="w-[95vw] h-[90vh] max-w-none sm:max-w-[95vw] p-0 gap-0 flex flex-col"
+      :show-close-button="false"
     >
-      <div
-        v-if="visible"
-        class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
-      >
-        <Transition
-          enter-active-class="transition-all duration-200 ease-out"
-          enter-from-class="opacity-0 scale-95"
-          enter-to-class="opacity-100 scale-100"
-          leave-active-class="transition-all duration-150 ease-in"
-          leave-from-class="opacity-100 scale-100"
-          leave-to-class="opacity-0 scale-95"
-          appear
+      <!-- Header -->
+      <DialogHeader class="flex flex-row items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 space-y-0">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+          <div>
+            <DialogTitle>HTML Content Editor</DialogTitle>
+            <DialogDescription class="text-xs">
+              Press Ctrl+S to save, Esc to cancel
+            </DialogDescription>
+          </div>
+        </div>
+
+        <button
+          @click="handleCancel"
+          class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-500"
         >
-          <div
-            v-if="visible"
-            class="bg-white dark:bg-gray-900 w-[95vw] h-[90vh] rounded-lg shadow-2xl flex flex-col overflow-hidden"
-          >
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  HTML Content Editor
-                </h2>
-              </div>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </DialogHeader>
 
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-500 dark:text-gray-400">
-                  Press Ctrl+S to save, Esc to cancel
-                </span>
-                <button
-                  @click="handleCancel"
-                  class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-500"
-                >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+      <!-- Toolbar -->
+      <div class="flex items-center gap-1 px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 overflow-x-auto">
+        <!-- Format button -->
+        <button
+          @click="formatCode"
+          class="px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded whitespace-nowrap transition-colors flex items-center gap-1 border border-blue-200 dark:border-blue-700 mr-2"
+          title="Format HTML code"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+          Format
+        </button>
+        <div class="w-px h-5 bg-gray-300 dark:bg-gray-600 mr-2"></div>
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mr-2 shrink-0">Insert:</span>
+        <button
+          v-for="item in snippets"
+          :key="item.label"
+          @click="insertSnippet(item.snippet)"
+          class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded whitespace-nowrap transition-colors"
+        >
+          {{ item.label }}
+        </button>
+      </div>
 
-            <!-- Toolbar -->
-            <div class="flex items-center gap-1 px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 overflow-x-auto">
-              <!-- Format button -->
-              <button
-                @click="formatCode"
-                class="px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded whitespace-nowrap transition-colors flex items-center gap-1 border border-blue-200 dark:border-blue-700 mr-2"
-                title="Format HTML code"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-                Format
-              </button>
-              <div class="w-px h-5 bg-gray-300 dark:bg-gray-600 mr-2"></div>
-              <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mr-2 shrink-0">Insert:</span>
-              <button
-                v-for="item in snippets"
-                :key="item.label"
-                @click="insertSnippet(item.snippet)"
-                class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded whitespace-nowrap transition-colors"
-              >
-                {{ item.label }}
-              </button>
-            </div>
-
-            <!-- Content Area -->
-            <div class="flex-1 flex overflow-hidden">
-              <!-- Editor with Syntax Highlighting -->
-              <div class="flex-1 flex flex-col border-r border-gray-200 dark:border-gray-700">
-                <div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                  <span class="text-xs font-medium text-gray-500 dark:text-gray-400">HTML Code</span>
-                </div>
-                <div class="flex-1 relative overflow-hidden">
-                  <!-- Syntax highlighted overlay -->
-                  <pre
-                    ref="highlightRef"
-                    class="absolute inset-0 p-4 font-mono text-sm bg-gray-900 overflow-auto pointer-events-none whitespace-pre-wrap break-words m-0"
-                    aria-hidden="true"
-                    v-html="highlightedContent + '\n'"
-                  ></pre>
-                  <!-- Transparent textarea for input -->
-                  <textarea
-                    ref="editorRef"
-                    v-model="content"
-                    @scroll="syncScroll"
-                    class="html-editor-textarea absolute inset-0 w-full h-full p-4 font-mono text-sm bg-transparent text-transparent caret-white resize-none focus:outline-none z-10"
-                    placeholder="Enter your HTML content here..."
-                    spellcheck="false"
-                  ></textarea>
-                  <!-- Placeholder when empty -->
-                  <div
-                    v-if="!content"
-                    class="absolute top-4 left-4 text-gray-500 font-mono text-sm pointer-events-none"
-                  >
-                    Enter your HTML content here...
-                  </div>
-                </div>
-              </div>
-
-              <!-- Preview -->
-              <div class="flex-1 flex flex-col">
-                <div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                  <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Preview</span>
-                </div>
-                <iframe
-                  ref="previewRef"
-                  class="flex-1 w-full bg-white"
-                  title="HTML Preview"
-                ></iframe>
-              </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div class="text-xs text-gray-500 dark:text-gray-400">
-                {{ content.length }} characters
-              </div>
-              <div class="flex items-center gap-2">
-                <button
-                  @click="handleCancel"
-                  class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  @click="handleSave"
-                  class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  Save Content
-                </button>
-              </div>
+      <!-- Content Area -->
+      <div class="flex-1 flex overflow-hidden">
+        <!-- Editor with Syntax Highlighting -->
+        <div class="flex-1 flex flex-col border-r border-gray-200 dark:border-gray-700">
+          <div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">HTML Code</span>
+          </div>
+          <div class="flex-1 relative overflow-hidden">
+            <!-- Syntax highlighted overlay -->
+            <pre
+              ref="highlightRef"
+              class="absolute inset-0 p-4 font-mono text-sm bg-gray-900 overflow-auto pointer-events-none whitespace-pre-wrap break-words m-0"
+              aria-hidden="true"
+              v-html="highlightedContent + '\n'"
+            ></pre>
+            <!-- Transparent textarea for input -->
+            <textarea
+              ref="editorRef"
+              v-model="content"
+              @scroll="syncScroll"
+              class="html-editor-textarea absolute inset-0 w-full h-full p-4 font-mono text-sm bg-transparent text-transparent caret-white resize-none focus:outline-none z-10"
+              placeholder="Enter your HTML content here..."
+              spellcheck="false"
+            ></textarea>
+            <!-- Placeholder when empty -->
+            <div
+              v-if="!content"
+              class="absolute top-4 left-4 text-gray-500 font-mono text-sm pointer-events-none"
+            >
+              Enter your HTML content here...
             </div>
           </div>
-        </Transition>
+        </div>
+
+        <!-- Preview -->
+        <div class="flex-1 flex flex-col">
+          <div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Preview</span>
+          </div>
+          <iframe
+            ref="previewRef"
+            class="flex-1 w-full bg-white"
+            title="HTML Preview"
+          ></iframe>
+        </div>
       </div>
-    </Transition>
-  </Teleport>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+          {{ content.length }} characters
+        </div>
+        <div class="flex items-center gap-2">
+          <Button variant="outline" @click="handleCancel">
+            Cancel
+          </Button>
+          <Button @click="handleSave">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Content
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>

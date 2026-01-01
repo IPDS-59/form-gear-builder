@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import FieldPicker from './FieldPicker.vue'
 import FunctionPicker from './FunctionPicker.vue'
 import OperatorButtons from './OperatorButtons.vue'
@@ -48,9 +57,6 @@ function insertAtCursor(text: string) {
   })
 }
 
-// Import nextTick
-import { nextTick } from 'vue'
-
 // Handle field selection
 function handleFieldSelect(dataKey: string) {
   insertAtCursor(`getValue('${dataKey}')`)
@@ -77,9 +83,11 @@ function apply() {
   emit('close')
 }
 
-// Cancel
-function cancel() {
-  emit('close')
+// Handle dialog open state change
+function handleOpenChange(open: boolean) {
+  if (!open) {
+    emit('close')
+  }
 }
 
 // Validate expression (basic check)
@@ -97,25 +105,20 @@ const isValid = computed(() => {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[800px] max-h-[80vh] flex flex-col">
-      <!-- Header -->
-      <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Expression Builder
-        </h2>
-        <button
-          @click="cancel"
-          class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-        >
-          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+  <Dialog :open="true" @update:open="handleOpenChange">
+    <DialogContent
+      class="sm:max-w-4xl max-h-[80vh] flex flex-col p-0 gap-0 bg-white dark:bg-gray-800"
+      :show-close-button="true"
+    >
+      <DialogHeader class="p-4 pb-0 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <DialogTitle>Expression Builder</DialogTitle>
+        <DialogDescription>
+          Build expressions using field values, operators, and functions.
+        </DialogDescription>
+      </DialogHeader>
 
       <!-- Expression textarea -->
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Expression
         </label>
@@ -137,9 +140,9 @@ const isValid = computed(() => {
       </div>
 
       <!-- Builder tools -->
-      <div class="flex-1 overflow-hidden flex">
+      <div class="flex-1 overflow-hidden flex min-h-64 bg-white dark:bg-gray-800">
         <!-- Fields -->
-        <div class="w-1/3 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+        <div class="w-1/3 border-r border-gray-200 dark:border-gray-700 overflow-y-auto bg-gray-50 dark:bg-gray-700/50">
           <FieldPicker
             :component-id="componentId"
             @select="handleFieldSelect"
@@ -147,7 +150,7 @@ const isValid = computed(() => {
         </div>
 
         <!-- Functions and Operators -->
-        <div class="w-2/3 overflow-y-auto p-4">
+        <div class="w-2/3 overflow-y-auto p-4 bg-white dark:bg-gray-800">
           <FunctionPicker @select="handleFunctionSelect" />
 
           <div class="mt-4">
@@ -159,22 +162,14 @@ const isValid = computed(() => {
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="flex items-center justify-end gap-2 p-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          @click="cancel"
-          class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-        >
+      <DialogFooter class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <Button variant="outline" @click="emit('close')">
           Cancel
-        </button>
-        <button
-          @click="apply"
-          :disabled="!isValid"
-          class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
-        >
+        </Button>
+        <Button @click="apply" :disabled="!isValid">
           Apply
-        </button>
-      </div>
-    </div>
-  </div>
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

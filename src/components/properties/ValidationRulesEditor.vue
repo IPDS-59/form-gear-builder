@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { BuilderComponent, ValidationRule } from '@/types'
 import { ValidationType } from '@/types'
 import { useValidationStore } from '@/stores/validationStore'
+import { useUIStore } from '@/stores/uiStore'
 
 const props = defineProps<{
   component: BuilderComponent
@@ -13,6 +14,7 @@ const emit = defineEmits<{
 }>()
 
 const validationStore = useValidationStore()
+const uiStore = useUIStore()
 const isExpanded = ref(true)
 
 // Get validation rules for this component
@@ -149,20 +151,12 @@ function getTypeColor(type: ValidationType): string {
           <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">
             Test Expression
           </label>
-          <div class="relative">
-            <textarea
-              :value="rule.test"
-              @input="updateRule(index, 'test', ($event.target as HTMLTextAreaElement).value)"
-              placeholder="getValue('field') == ''"
-              rows="2"
-              class="w-full px-2 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
-            />
-            <button
-              class="absolute right-2 bottom-2 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
-              title="Open Expression Builder"
-            >
-              Builder
-            </button>
+          <div
+            @click="uiStore.openExpressionBuilder(component._id, 'validation', index)"
+            class="w-full px-2 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-12"
+          >
+            <span v-if="rule.test" class="whitespace-pre-wrap break-all">{{ rule.test }}</span>
+            <span v-else class="text-gray-400 dark:text-gray-500">Click to build expression...</span>
           </div>
           <p class="mt-1 text-xs text-gray-400">
             Expression returns true when validation fails
