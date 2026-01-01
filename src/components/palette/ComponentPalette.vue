@@ -3,6 +3,10 @@ import { ref } from 'vue'
 import { componentCategories } from '@/utils/componentDefaults'
 import DraggableComponent from './DraggableComponent.vue'
 
+const emit = defineEmits<{
+  componentSelected: []
+}>()
+
 // Track expanded categories
 const expandedCategories = ref<string[]>(componentCategories.map(c => c.name))
 
@@ -110,6 +114,7 @@ function hasVisibleComponents(category: typeof componentCategories[0]): boolean 
               v-for="component in filterComponents(category.components)"
               :key="component.type"
               :component="component"
+              @selected="emit('componentSelected')"
             />
           </div>
         </Transition>
