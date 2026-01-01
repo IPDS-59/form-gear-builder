@@ -31,53 +31,6 @@ function handleHtmlSave(content: string) {
   emit('update', 'label', content)
 }
 
-// Isolated HTML preview using iframe
-const previewIframeRef = ref<HTMLIFrameElement | null>(null)
-
-function updateInlinePreview() {
-  if (!previewIframeRef.value) return
-  const doc = previewIframeRef.value.contentDocument
-  if (!doc) return
-
-  doc.open()
-  doc.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          padding: 0.5rem;
-          line-height: 1.5;
-          color: #374151;
-          font-size: 0.875rem;
-        }
-        h1, h2, h3, h4, h5, h6 { margin-bottom: 0.25rem; color: #111827; }
-        p { margin-bottom: 0.5rem; }
-        ul, ol { margin-bottom: 0.5rem; padding-left: 1.25rem; }
-        a { color: #2563eb; }
-        img { max-width: 100%; height: auto; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #e5e7eb; padding: 0.25rem; text-align: left; font-size: 0.75rem; }
-        th { background: #f9fafb; }
-      </style>
-    </head>
-    <body>${props.component.label || '<em style="color: #9ca3af;">No content</em>'}</body>
-    </html>
-  `)
-  doc.close()
-}
-
-// Watch for label changes to update preview
-watch(() => props.component.label, () => {
-  if (props.component.type === ComponentType.INNER_HTML) {
-    // Use nextTick-like delay for iframe
-    setTimeout(updateInlinePreview, 0)
-  }
-})
-
 const emit = defineEmits<{
   update: [key: string, value: unknown]
 }>()
@@ -120,9 +73,6 @@ function handleSelect(key: string, event: Event) {
   emit('update', key, value)
 }
 
-function handlePreviewClick() {
-  window.setTimeout(updateInlinePreview, 50)
-}
 </script>
 
 <template>
@@ -175,45 +125,14 @@ function handlePreviewClick() {
         <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
           {{ isInnerHTML ? 'HTML Content' : 'Label' }} <span class="text-red-500">*</span>
         </label>
-        <!-- Textarea for INNER_HTML type -->
+        <!-- Click to open HTML editor for INNER_HTML type -->
         <template v-if="isInnerHTML">
-          <div class="space-y-2">
-            <div class="relative">
-              <textarea
-                :value="component.label"
-                @input="handleInput('label', $event)"
-                placeholder="<div class='my-class'>Your HTML content here...</div>"
-                rows="6"
-                class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-              />
-            </div>
-            <!-- Full-screen editor button -->
-            <button
-              @click="openHtmlEditor"
-              class="w-full px-3 py-2 text-sm text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-600 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center justify-center gap-2 transition-colors"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-              Open Full Editor
-            </button>
-            <!-- Preview using isolated iframe -->
-            <details class="border border-gray-200 dark:border-gray-600 rounded-md">
-              <summary
-                class="px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                @click="handlePreviewClick"
-              >
-                Preview HTML
-              </summary>
-              <div class="border-t border-gray-200 dark:border-gray-600 bg-white">
-                <iframe
-                  ref="previewIframeRef"
-                  class="w-full border-0"
-                  style="height: 150px;"
-                  title="HTML Preview"
-                />
-              </div>
-            </details>
+          <div
+            @click="openHtmlEditor"
+            class="w-full px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-24 overflow-hidden"
+          >
+            <div v-if="component.label" class="prose prose-sm dark:prose-invert max-w-none line-clamp-4" v-html="component.label" />
+            <span v-else class="text-gray-400 dark:text-gray-500 font-mono">Click to edit HTML content...</span>
           </div>
         </template>
         <!-- Regular input for other types -->
