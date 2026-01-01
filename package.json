@@ -1,6 +1,6 @@
 {
   "name": "formgear-builder",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Visual drag-and-drop template builder for FormGear forms",
   "type": "module",
   "author": "Ignatius Aditya Setyadi",
