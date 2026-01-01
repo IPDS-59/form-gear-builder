@@ -129,10 +129,10 @@ function handleSelect(key: string, event: Event) {
         <template v-if="isInnerHTML">
           <div
             @click="openHtmlEditor"
-            class="w-full px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-24 overflow-hidden"
+            class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-12"
           >
-            <div v-if="component.label" class="prose prose-sm dark:prose-invert max-w-none line-clamp-4" v-html="component.label" />
-            <span v-else class="text-gray-400 dark:text-gray-500 font-mono">Click to edit HTML content...</span>
+            <span v-if="component.label" class="whitespace-pre-wrap break-all line-clamp-4">{{ component.label }}</span>
+            <span v-else class="text-gray-400 dark:text-gray-500">Click to edit HTML content...</span>
           </div>
         </template>
         <!-- Regular input for other types -->
