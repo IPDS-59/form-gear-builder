@@ -1,4 +1,41 @@
 # Changelog
+## [1.1.0] - 2026-01-01
+
+### ✨ Features
+
+-  integrate shadcn-vue with AlertDialog for better UX (9620fa2)
+-  display app version in toolbar (dc9436d)
+-  migrate dialogs to shadcn-vue and improve UX (01f9e6f)
+-  add syntax highlighting to expression builder (64e2781)
+-  convert HTML editor to click-to-open pattern (e0b2045)
+
+### 🐛 Bug Fixes
+
+-  prevent input focus loss when editing validation rules (6ad536d)
+-  make toolbar responsive and hide actions in preview mode (c8491c8)
+-  add responsive layout with mobile tap-to-place (8ba1aef)
+-  improve dialog dark mode contrast (5a52c5f)
+-  show plain HTML text in sidebar instead of rendered preview (900a3a2)
+
+### 📚 Documentation
+
+-  update changelog for 1.0.0 (ee0eba8)
+
+### 🔧 Chores
+
+-  bump version to 1.1.0 for next development cycle (6a4310a)
+-  update form-gear assets (d3dc177)
+-  update form-gear assets (362fd84)
+-  update form-gear assets (a856eb6)
+
+### 📝 Other Changes
+
+- Merge pull request #4 from IPDS-59/chore/bump-next-version (e28cd1a)
+- Merge pull request #5 from IPDS-59/chore/back-merge-1.0.0 (c30311f)
+- Merge pull request #6 from IPDS-59/fix/validation-input-focus (9a1f8a6)
+- Merge pull request #7 from IPDS-59/fix/responsive-toolbar (99fd903)
+- Merge pull request #8 from IPDS-59/release/1.1.0 (81fa4a9)
+
 
 All notable changes to this project will be documented in this file.
 
