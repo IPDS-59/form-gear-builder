@@ -35,6 +35,12 @@ export const useUIStore = defineStore('ui', () => {
     dropIndex: -1,
   })
 
+  // Mobile tap-to-place state (pending component to add)
+  const pendingComponent = ref<{
+    type: number
+    defaultProps?: Record<string, unknown>
+  } | null>(null)
+
   // History state
   const history = ref<string[]>([])
   const historyIndex = ref(-1)
@@ -222,6 +228,19 @@ export const useUIStore = defineStore('ui', () => {
     dragState.value.isDragging = dragging
   }
 
+  // Set pending component for mobile tap-to-place
+  function setPendingComponent(type: number, defaultProps?: Record<string, unknown>): void {
+    pendingComponent.value = { type, defaultProps }
+  }
+
+  // Clear pending component
+  function clearPendingComponent(): void {
+    pendingComponent.value = null
+  }
+
+  // Check if there's a pending component
+  const hasPendingComponent = computed(() => pendingComponent.value !== null)
+
   // Clear selection
   function clearSelection(): void {
     selectedComponentId.value = null
@@ -233,9 +252,11 @@ export const useUIStore = defineStore('ui', () => {
     previewMode,
     expressionModal,
     dragState,
+    pendingComponent,
     darkMode,
     notification,
     isDragging,
+    hasPendingComponent,
     canUndo,
     canRedo,
     selectComponent,
@@ -251,6 +272,8 @@ export const useUIStore = defineStore('ui', () => {
     updateDropTarget,
     endDrag,
     setDragging,
+    setPendingComponent,
+    clearPendingComponent,
     addToHistory,
     undo,
     redo,

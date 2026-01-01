@@ -2,13 +2,16 @@
 import { computed } from 'vue'
 import { useTemplateStore } from '@/stores/templateStore'
 import { useUIStore } from '@/stores/uiStore'
+import { useValidationStore } from '@/stores/validationStore'
 import { getComponentInfo, needsOptions } from '@/utils/componentDefaults'
 import CommonProperties from './CommonProperties.vue'
 import OptionsEditor from './OptionsEditor.vue'
 import ValidationRulesEditor from './ValidationRulesEditor.vue'
+import ExpressionBuilder from '@/components/expression-builder/ExpressionBuilder.vue'
 
 const templateStore = useTemplateStore()
 const uiStore = useUIStore()
+const validationStore = useValidationStore()
 
 // Get selected component
 const selectedComponent = computed(() => {
@@ -32,6 +35,49 @@ const showOptions = computed(() => {
 function updateProperty(key: string, value: unknown) {
   if (!selectedComponent.value) return
   templateStore.updateComponent(selectedComponent.value._id, key, value)
+}
+
+// Get the component being edited in expression builder
+const expressionComponent = computed(() => {
+  if (!uiStore.expressionModal.open) return null
+  return templateStore.components.find(c => c._id === uiStore.expressionModal.componentId)
+})
+
+// Get current expression value based on field being edited
+const currentExpressionValue = computed(() => {
+  if (!expressionComponent.value) return ''
+
+  const modal = uiStore.expressionModal
+  if (modal.field === 'expression') {
+    return expressionComponent.value.expression || ''
+  } else if (modal.field === 'enableCondition') {
+    return expressionComponent.value.enableCondition || ''
+  } else if (modal.field === 'validation' && modal.validationIndex >= 0) {
+    const testFn = validationStore.testFunctions.find(
+      tf => tf.dataKey === expressionComponent.value?.dataKey
+    )
+    return testFn?.validations[modal.validationIndex]?.test || ''
+  }
+  return ''
+})
+
+// Handle expression update from builder
+function handleExpressionUpdate(value: string) {
+  const modal = uiStore.expressionModal
+  if (!expressionComponent.value) return
+
+  if (modal.field === 'expression') {
+    templateStore.updateComponent(expressionComponent.value._id, 'expression', value)
+  } else if (modal.field === 'enableCondition') {
+    templateStore.updateComponent(expressionComponent.value._id, 'enableCondition', value)
+  } else if (modal.field === 'validation' && modal.validationIndex >= 0) {
+    validationStore.updateValidationRule(
+      expressionComponent.value.dataKey,
+      modal.validationIndex,
+      'test',
+      value
+    )
+  }
 }
 </script>
 
@@ -138,5 +184,14 @@ function updateProperty(key: string, value: unknown) {
         </div>
       </div>
     </Transition>
+
+    <!-- Expression Builder Modal -->
+    <ExpressionBuilder
+      v-if="uiStore.expressionModal.open && expressionComponent"
+      :model-value="currentExpressionValue"
+      :component-id="expressionComponent._id"
+      @update:model-value="handleExpressionUpdate"
+      @close="uiStore.closeExpressionBuilder()"
+    />
   </div>
 </template>

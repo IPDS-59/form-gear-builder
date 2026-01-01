@@ -2,11 +2,14 @@
 import { ref, computed, watch } from 'vue'
 import type { BuilderComponent } from '@/types'
 import { ComponentType, ClientMode } from '@/types'
+import { useUIStore } from '@/stores/uiStore'
 import HtmlContentEditor from './HtmlContentEditor.vue'
 
 const props = defineProps<{
   component: BuilderComponent
 }>()
+
+const uiStore = useUIStore()
 
 // HTML Editor modal state
 const showHtmlEditor = ref(false)
@@ -257,20 +260,12 @@ function handlePreviewClick() {
         <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
           Expression
         </label>
-        <div class="relative">
-          <textarea
-            :value="component.expression || ''"
-            @input="handleInput('expression', $event)"
-            placeholder="getValue('field1') + getValue('field2')"
-            rows="3"
-            class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-          />
-          <button
-            class="absolute right-2 bottom-2 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
-            title="Open Expression Builder"
-          >
-            Builder
-          </button>
+        <div
+          @click="uiStore.openExpressionBuilder(component._id, 'expression')"
+          class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-18"
+        >
+          <span v-if="component.expression" class="whitespace-pre-wrap break-all">{{ component.expression }}</span>
+          <span v-else class="text-gray-400 dark:text-gray-500">Click to build expression...</span>
         </div>
       </div>
 
@@ -349,20 +344,12 @@ function handlePreviewClick() {
         <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
           Enable Condition
         </label>
-        <div class="relative">
-          <textarea
-            :value="component.enableCondition || ''"
-            @input="handleInput('enableCondition', $event)"
-            placeholder="getValue('field') == 'value'"
-            rows="2"
-            class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-          />
-          <button
-            class="absolute right-2 bottom-2 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
-            title="Open Expression Builder"
-          >
-            Builder
-          </button>
+        <div
+          @click="uiStore.openExpressionBuilder(component._id, 'enableCondition')"
+          class="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors min-h-12"
+        >
+          <span v-if="component.enableCondition" class="whitespace-pre-wrap break-all">{{ component.enableCondition }}</span>
+          <span v-else class="text-gray-400 dark:text-gray-500">Click to build condition...</span>
         </div>
       </div>
     </div>
