@@ -217,6 +217,7 @@ function closePreview() {
         @load="handleIframeLoad"
         @error="handleIframeError"
         title="FormGear Preview"
+        tabindex="-1"
       />
     </div>
 

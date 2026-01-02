@@ -177,26 +177,21 @@ function updatePreview() {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Tailwind CSS CDN -->
+      <script src="https://cdn.tailwindcss.com"><\/script>
+      <!-- Google Fonts - Montserrat -->
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+      <!-- FormGear CSS -->
+      <link rel="stylesheet" href="/form-gear.css">
       <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: 'Montserrat', sans-serif;
           padding: 1rem;
           line-height: 1.6;
           color: #374151;
         }
-        h1, h2, h3, h4, h5, h6 { margin-bottom: 0.5rem; color: #111827; }
-        p { margin-bottom: 1rem; }
-        ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
-        a { color: #2563eb; }
-        img { max-width: 100%; height: auto; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
-        th, td { border: 1px solid #e5e7eb; padding: 0.5rem; text-align: left; }
-        th { background: #f9fafb; }
-        code { background: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875em; }
-        pre { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
-        pre code { background: transparent; padding: 0; }
-        blockquote { border-left: 4px solid #e5e7eb; padding-left: 1rem; margin-bottom: 1rem; color: #6b7280; }
       </style>
     </head>
     <body>${content.value}</body>
