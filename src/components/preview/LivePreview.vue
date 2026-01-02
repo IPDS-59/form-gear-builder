@@ -217,6 +217,8 @@ function closePreview() {
         @load="handleIframeLoad"
         @error="handleIframeError"
         title="FormGear Preview"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        tabindex="-1"
       />
     </div>
 
