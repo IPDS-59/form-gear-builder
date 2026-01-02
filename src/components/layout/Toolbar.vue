@@ -295,36 +295,38 @@ function handleRedo() {
         leave-from-class="opacity-100 scale-100 translate-x-0"
         leave-to-class="opacity-0 scale-90 translate-x-2"
       >
-      <AlertDialog v-if="!uiStore.previewMode">
-        <AlertDialogTrigger as-child>
-          <button
-            class="p-1.5 sm:px-3 sm:py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md flex items-center gap-1.5"
-            title="Clear"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            <span class="hidden md:inline">Clear</span>
-          </button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Clear Form</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to clear the form? All components and configurations will be permanently deleted. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              class="bg-red-600 hover:bg-red-700 text-white"
-              @click="clearForm"
+      <div v-if="!uiStore.previewMode">
+        <AlertDialog>
+          <AlertDialogTrigger as-child>
+            <button
+              class="p-1.5 sm:px-3 sm:py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md flex items-center gap-1.5"
+              title="Clear"
             >
-              Clear Form
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span class="hidden md:inline">Clear</span>
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Clear Form</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to clear the form? All components and configurations will be permanently deleted. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                class="bg-red-600 hover:bg-red-700 text-white"
+                @click="clearForm"
+              >
+                Clear Form
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
       </Transition>
     </div>
 
