@@ -1,4 +1,28 @@
 # Changelog
+## [1.1.1] - 2026-01-02
+
+### ✨ Features
+
+-  inject Tailwind, FormGear CSS and Montserrat font in HTML preview (e01db3d)
+
+### 🐛 Bug Fixes
+
+- fix(form-gear): update form-gear asset (aa83336)
+-  add sandbox and tabindex to preview iframe for focus isolation (5fbfd0f)
+-  resolve transition warning and add Montserrat font to preview (3441044)
+
+### 📚 Documentation
+
+-  update changelog for 1.1.0 (5f94aee)
+
+### 🔧 Chores
+
+-  bump version to 1.1.1 (4eaf8f4)
+
+### 📝 Other Changes
+
+- Merge pull request #11 from IPDS-59/hotfix/1.1.1 (0363f10)
+
 ## [1.1.0] - 2026-01-01
 
 ### ✨ Features
