@@ -1,4 +1,23 @@
 # Changelog
+## [1.1.2] - 2026-01-03
+
+### 🐛 Bug Fixes
+
+- fix(form-gear): update form-gear asset (d80745f)
+- fix(form-gear): adjust the border styling (de06116)
+
+### 📚 Documentation
+
+-  update changelog for 1.1.1 (8f80161)
+
+### 🔧 Chores
+
+-  bump version to 1.1.2 (29b8a4b)
+
+### 📝 Other Changes
+
+- Merge pull request #13 from IPDS-59/hotfix/1.1.2 (cb17d78)
+
 ## [1.1.1] - 2026-01-02
 
 ### ✨ Features
